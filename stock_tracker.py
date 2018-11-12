@@ -22,7 +22,8 @@ with open(path_stock_list, 'r') as f:
         stock_list.append('{}:{}'.format(exchange_name, stock_symbol.rstrip()))
 
 # define where the previous day stock closing price will be found in the json from Alpha Vantage's API
-observation_date = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
+# observation_date = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
+observation_date = (datetime.datetime.now() + datetime.timedelta(days=-2)).strftime('%Y-%m-%d')
 dict_level_1 = 'Time Series (Daily)'
 dict_level_2 = observation_date
 dict_level_3 = '4. close'
@@ -38,5 +39,14 @@ for current_stock in stock_list:
     r = requests.get(url)
     data = r.json()
     stock_dict[current_stock, observation_date] = round(float(data[dict_level_1][dict_level_2][dict_level_3]),2)
-    print(stock_dict)
     time.sleep(12)
+
+# path to text file for output
+directory_output = os.getcwd()
+filename_output = 'windex.txt'
+path_output = directory_output + '\\' + filename_output
+
+# populate output file with data
+with open(path_output, 'w') as f:
+    for dict_key in stock_dict.keys():
+        f.write(str(stock_dict[dict_key]))
